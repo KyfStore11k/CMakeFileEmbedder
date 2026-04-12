@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/CMakeFileEmbedderTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/AddMainExecutableFile.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/AddEmbeddedFiles.cmake")
