@@ -47,6 +47,46 @@ Then use it normally:
 add_embedded_files(MyProject assets/icon.png assets/font.ttf)
 ```
 
+### FindPackage (Installed Usage)
+If you prefer installing the library and using it via `find_package`, you can build and install it manually.
+#### 1. Build and Install
+
+Clone the repository:
+
+```bash
+git clone https://github.com/KyfStore11k/CMakeFileEmbedder.git
+cd CMakeFileEmbedder
+```
+
+Configure and install:
+
+```bash
+cmake -S . -B build
+cmake --build build
+cmake --install build
+```
+
+By default, this will install the package into your system CMake prefix (e.g., `/usr/local` on Linux or `C:\Program Files` on Windows).
+
+You can customize the install location:
+
+```bash
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/your/install/path
+cmake --build build
+cmake --install build
+```
+#### 2. Using `find_package`
+After installation, you can use it in your project like this:
+```cmake
+find_package(CMakeFileEmbedder REQUIRED CONFIG)
+
+# add_main_executable_file(MyProject main.cpp)
+add_embedded_files(MyProject
+    assets/icon.png
+    assets/font.ttf
+)
+```
+
 ### add_subdirectory (Alternative)
 
 1. Add the project to your repository:

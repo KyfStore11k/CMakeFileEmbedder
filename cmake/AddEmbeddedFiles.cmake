@@ -30,6 +30,7 @@ function(add_embedded_files TARGET)
         get_filename_component(FILE_NAME "${ABS_PATH}" NAME)
         string(REPLACE "/" "_" SYMBOL_NAME "${FILE_NAME}")
         string(REPLACE "." "_" SYMBOL_NAME "${SYMBOL_NAME}")
+        string(REPLACE "-" "_" SYMBOL_NAME "${SYMBOL_NAME}")
 
         file(SIZE "${ABS_PATH}" FILE_SIZE)
         file(READ "${ABS_PATH}" HEX_DATA HEX)

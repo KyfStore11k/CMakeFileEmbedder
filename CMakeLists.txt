@@ -24,28 +24,61 @@ else()
         message(FATAL_ERROR "CMakeFileEmbedder: not supported on this platform (expected Windows or Linux)")
 endif()
 
+#if(WIN32)
+#    if(MSVC)
+#        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x64.lib")
+#        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x86.lib")
+#        else()
+#            message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
+#        endif()
+#    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+#        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x64.a")
+#        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x86.a")
+#        else()
+#            message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
+#        endif()
+#    else()
+#        message(FATAL_ERROR "Unsupported compiler; expected MSVC or MinGW.")
+#    endif()
+#
+#    #target_link_libraries(CMakeFileEmbedder PRIVATE debug "${MINHOOK_LIB}" optimized )
+#    add_library(CFEMinHook STATIC IMPORTED GLOBAL)
+#    set_target_properties(CFEMinHook PROPERTIES
+#            IMPORTED_LOCATION "${MINHOOK_RELEASE}"
+#            IMPORTED_LOCATION_RELWITHDEB "${MINHOOK_RELEASE}"
+#            IMPORTED_LOCATION_RELEASE "${MINHOOK_RELEASE}"
+#            IMPORTED_LOCATION_DEBUG "${MINHOOK_DEBUG}"
+#    )
+#    target_link_libraries(CMakeFileEmbedder PRIVATE CFEMinHook)
+#endif()
 if(WIN32)
-    if(MSVC)
-        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x64.lib")
-        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x86.lib")
-        else()
-            message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
-        endif()
-    elseif(MINGW)
-        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x64.a")
-        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x86.a")
-        else()
-            message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
-        endif()
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(MH_ARCH "x64")
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(MH_ARCH "x86")
     else()
-        message(FATAL_ERROR "Unsupported compiler; expected MSVC or MinGW.")
+        message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
     endif()
 
-    target_link_libraries(CMakeFileEmbedder PRIVATE "${MINHOOK_LIB}")
+    if(MSVC OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        set(MH_EXT "lib")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        set(MH_EXT "a")
+    else()
+        message(FATAL_ERROR "Unsupported compiler; expected MSVC or GNU (MinGW).")
+    endif()
+
+    set(MINHOOK_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.${MH_ARCH}.${MH_EXT}")
+    set(MINHOOK_DEBUG   "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.${MH_ARCH}d.${MH_EXT}")
+
+    target_link_libraries(CMakeFileEmbedder PRIVATE
+            $<$<CONFIG:Debug>:${MINHOOK_DEBUG}>
+            $<$<NOT:$<CONFIG:Debug>>:${MINHOOK_RELEASE}>
+    )
 endif()
 
 target_include_directories(CMakeFileEmbedder
@@ -103,6 +136,12 @@ install(
 install(
         FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/cmake/AddEmbeddedFiles.cmake"
+        DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeFileEmbedder
+)
+install(
+        FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateMainWrapper.cmake"
         DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeFileEmbedder
 )
