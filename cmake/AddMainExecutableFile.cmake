@@ -10,6 +10,23 @@ function(add_main_executable_file TARGET_NAME SOURCE_FILE)
         message(FATAL_ERROR "add_main_executable_file: SOURCE_FILE='${SOURCE_FILE}' does not exist at '${SRC_PATH}'")
     endif()
 
+    set(GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set(SOURCE_PATH "${GEN_DIR}/embedded_files.cpp")
+    file(MAKE_DIRECTORY "${GEN_DIR}")
+
+    file(WRITE "${SOURCE_PATH}"
+            "#include <unordered_map>\n"
+            "#include <string>\n\n"
+            "namespace embedded {\n"
+            "struct EmbeddedFile {\n"
+            "    const unsigned char* data;\n"
+            "    size_t size;\n"
+            "};\n"
+            "std::unordered_map<std::string, EmbeddedFile> registry;\n"
+            "}\n"
+    )
+    target_sources(${TARGET_NAME} PRIVATE "${SOURCE_PATH}")
+
     set(WRAPPER_MAIN "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}_wrapper_main.cpp")
 
     add_custom_command(
