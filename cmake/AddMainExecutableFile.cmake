@@ -1,3 +1,5 @@
+get_filename_component(CMAKEFILEEMBEDDER_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+
 function(add_main_executable_file TARGET_NAME SOURCE_FILE)
     if(ARGC GREATER 2)
         message(FATAL_ERROR "add_main_executable_file expects exactly one SOURCE_FILE, not ${ARGN}")
@@ -9,8 +11,6 @@ function(add_main_executable_file TARGET_NAME SOURCE_FILE)
     endif()
 
     set(WRAPPER_MAIN "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}_wrapper_main.cpp")
-
-    message("${CMAKEFILEEMBEDDER_DIR} IS PATH! FROM AMEF.cmake")
 
     add_custom_command(
             OUTPUT "${WRAPPER_MAIN}"

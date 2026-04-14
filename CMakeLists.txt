@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INSTALL_INCLUDEDIR "include")
 set(CMAKE_INSTALL_LIBDIR "lib")
 
-set(CMAKEFILEEMBEDDER_DIR "${CMAKE_CURRENT_LIST_DIR}")
-message("${CMAKEFILEEMBEDDER_DIR} IS PATH!")
-
 if(WIN32)
         add_library(CMakeFileEmbedder
                 src/pWindowsHook.cpp
