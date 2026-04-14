@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INSTALL_INCLUDEDIR "include")
 set(CMAKE_INSTALL_LIBDIR "lib")
 
+set(CMAKEFILEEMBEDDER_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
 if(WIN32)
         add_library(CMakeFileEmbedder
                 src/pWindowsHook.cpp
@@ -24,37 +26,6 @@ else()
         message(FATAL_ERROR "CMakeFileEmbedder: not supported on this platform (expected Windows or Linux)")
 endif()
 
-#if(WIN32)
-#    if(MSVC)
-#        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x64.lib")
-#        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x86.lib")
-#        else()
-#            message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
-#        endif()
-#    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-#        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x64.a")
-#        elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-#            set(MINHOOK_LIB "${CMAKE_CURRENT_SOURCE_DIR}/lib/libMinHook.x86.a")
-#        else()
-#            message(FATAL_ERROR "Unsupported pointer size; expected 4 or 8.")
-#        endif()
-#    else()
-#        message(FATAL_ERROR "Unsupported compiler; expected MSVC or MinGW.")
-#    endif()
-#
-#    #target_link_libraries(CMakeFileEmbedder PRIVATE debug "${MINHOOK_LIB}" optimized )
-#    add_library(CFEMinHook STATIC IMPORTED GLOBAL)
-#    set_target_properties(CFEMinHook PROPERTIES
-#            IMPORTED_LOCATION "${MINHOOK_RELEASE}"
-#            IMPORTED_LOCATION_RELWITHDEB "${MINHOOK_RELEASE}"
-#            IMPORTED_LOCATION_RELEASE "${MINHOOK_RELEASE}"
-#            IMPORTED_LOCATION_DEBUG "${MINHOOK_DEBUG}"
-#    )
-#    target_link_libraries(CMakeFileEmbedder PRIVATE CFEMinHook)
-#endif()
 if(WIN32)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(MH_ARCH "x64")

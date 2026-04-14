@@ -17,7 +17,7 @@ function(add_main_executable_file TARGET_NAME SOURCE_FILE)
             -DOUT_FILE=${WRAPPER_MAIN}
             -DCOMPILER=${CMAKE_CXX_COMPILER}
             -DMSVC=$<BOOL:${MSVC}>
-            -P "${CMAKEFILEEMBEDDER_CMAKE_DIR}/GenerateMainWrapper.cmake"
+            -P "${CMAKEFILEEMBEDDER_DIR}/GenerateMainWrapper.cmake"
             DEPENDS "${SRC_PATH}"
             VERBATIM
     )
