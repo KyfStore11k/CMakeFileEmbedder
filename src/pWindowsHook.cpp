@@ -495,33 +495,40 @@ errno_t __cdecl HookWFopenS(FILE** pFile, const wchar_t* filename, const wchar_t
     return RealWFopenS(pFile, filename, mode);
 }
 
-size_t __cdecl HookFread(void* buffer, size_t size, size_t count, FILE* stream) {
-    if (!buffer || size == 0 || count == 0) return 0;
+size_t __cdecl HookFread(void* buffer, size_t size, size_t count, FILE* stream)
+{
+    if (!buffer || size == 0 || count == 0)
+        return 0;
 
     std::lock_guard<std::mutex> lock(g_MapMutex);
+
     auto it_handle = g_FileToHandle.find(stream);
-    if (it_handle == g_FileToHandle.end()) {
+    if (it_handle == g_FileToHandle.end())
         return RealFread(buffer, size, count, stream);
-    }
 
     HANDLE h = it_handle->second;
+
     auto it_vf = g_VirtualFiles.find(h);
-    if (it_vf == g_VirtualFiles.end()) {
+    if (it_vf == g_VirtualFiles.end())
         return RealFread(buffer, size, count, stream);
-    }
 
     VirtualFile& vf = it_vf->second;
+
     size_t requested_bytes = size * count;
-    size_t available = (vf.offset < vf.size) ? (vf.size - vf.offset) : 0;
-    size_t toRead     = (available < requested_bytes) ? available : requested_bytes;
 
-    if (toRead > 0) {
-        memcpy(buffer, &vf.data[vf.offset], toRead);
-        vf.offset += toRead;
-    }
+    if (vf.offset >= vf.size)
+        return 0;
 
-    size_t n = toRead / size;
-    return n;
+    size_t available = vf.size - vf.offset;
+    size_t to_read = (requested_bytes < available) ? requested_bytes : available;
+
+    if (to_read == 0)
+        return 0;
+
+    memcpy(buffer, vf.data + vf.offset, to_read);
+    vf.offset += to_read;
+
+    return to_read / size;
 }
 
 int __cdecl HookFseek(FILE* stream, long offset, int whence) {

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 4.1)
 project(CMakeFileEmbedder VERSION 1.0.0 LANGUAGES CXX)
 
+find_package(LLVM REQUIRED CONFIG)
+
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_INSTALL_INCLUDEDIR "include")
@@ -114,6 +116,12 @@ install(
         DESTINATION
         ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeFileEmbedder
 )
+install(
+        FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeFileEmbedder.cmake"
+        DESTINATION
+        ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeFileEmbedder
+)
 
 if (UNIX AND NOT APPLE)
     install(
@@ -129,6 +137,11 @@ if (UNIX AND NOT APPLE)
             ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeFileEmbedder
     )
 endif()
+
+export(EXPORT CMakeFileEmbedderTargets
+        NAMESPACE CMakeFileEmbedder::
+        FILE "${CMAKE_CURRENT_BINARY_DIR}/CMakeFileEmbedderTargets.cmake"
+)
 
 install(
         EXPORT CMakeFileEmbedderTargets

@@ -1,5 +1,8 @@
 @PACKAGE_INIT@
 
+set(CMAKEFILEEMBEDDER_EXTRACT_TOOL
+    "${PACKAGE_PREFIX_DIR}/bin/ExtractCompileCommand@CMAKE_EXECUTABLE_SUFFIX@"
+)
 include("${CMAKE_CURRENT_LIST_DIR}/CMakeFileEmbedderTargets.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/AddMainExecutableFile.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/AddEmbeddedFiles.cmake")

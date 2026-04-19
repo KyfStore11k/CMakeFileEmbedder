@@ -39,6 +39,7 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(CMakeFileEmbedder)
+include("${CMakeFileEmbedder_SOURCE_DIR}/cmake/CMakeFileEmbedder.cmake")
 ```
 
 Then use it normally:

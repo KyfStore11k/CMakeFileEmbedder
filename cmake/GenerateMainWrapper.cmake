@@ -1,11 +1,54 @@
-if(MSVC)
-    set(PP_FLAGS /EP)
+file(READ "${PP_FLAGS_FILE}" PP_FLAGS)
+
+set(COMPILER_FLAGS "")
+if (MSVC)
+    foreach(i IN LISTS INCLUDE_DIRS)
+        list(APPEND COMPILER_FLAGS "/I${i}")
+    endforeach()
+    foreach(i IN LISTS INT_INCLUDE_DIRS)
+        list(APPEND COMPILER_FLAGS "/I${i}")
+    endforeach()
+
+    foreach(d IN LISTS COMPILE_DEFINITIONS)
+        list(APPEND COMPILER_FLAGS "/D${d}")
+    endforeach()
+    foreach(d IN LISTS INT_COMPILE_DEFINITIONS)
+        list(APPEND COMPILER_FLAGS "/D${d}")
+    endforeach()
+
+    foreach(o IN LISTS COMPILE_OPTIONS)
+        list(APPEND COMPILER_FLAGS "${o}")
+    endforeach()
+    foreach(o IN LISTS INT_COMPILE_OPTIONS)
+        list(APPEND COMPILER_FLAGS "${o}")
+    endforeach()
 else()
-    set(PP_FLAGS -E -P)
+    foreach(i IN LISTS INCLUDE_DIRS)
+        list(APPEND COMPILER_FLAGS "-I${i}")
+    endforeach()
+    foreach(i IN LISTS INT_INCLUDE_DIRS)
+        list(APPEND COMPILER_FLAGS "-I${i}")
+    endforeach()
+
+    foreach(d IN LISTS COMPILE_DEFINITIONS)
+        list(APPEND COMPILER_FLAGS "-D${d}")
+    endforeach()
+    foreach(d IN LISTS INT_COMPILE_DEFINITIONS)
+        list(APPEND COMPILER_FLAGS "-D${d}")
+    endforeach()
+
+    foreach(o IN LISTS COMPILE_OPTIONS)
+        list(APPEND COMPILER_FLAGS "${o}")
+    endforeach()
+    foreach(o IN LISTS INT_COMPILE_OPTIONS)
+        list(APPEND COMPILER_FLAGS "${o}")
+    endforeach()
 endif()
 
+set(COMPILE_ARGS "${COMPILER_FLAGS}")
+
 execute_process(
-        COMMAND ${COMPILER} ${PP_FLAGS} "${SRC_PATH}"
+        COMMAND ${COMPILER} ${PP_FLAGS} ${COMPILE_ARGS} "${SRC_PATH}"
         OUTPUT_VARIABLE SOURCE_CONTENT
         ERROR_VARIABLE PP_ERROR
         RESULT_VARIABLE PP_RESULT
