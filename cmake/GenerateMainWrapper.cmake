@@ -1,19 +1,30 @@
 file(READ "${PP_FLAGS_FILE}" PP_FLAGS)
 
+# Used for debugging purposes:
+# - message("${INCLUDE_DIRS}, ${INT_INCLUDE_DIRS}, ${COMPILE_DEFINITIONS}, ${INT_COMPILE_DEFINITIONS}, ${COMPILE_OPTIONS}, ${INT_COMPILE_OPTIONS}")
+
 set(COMPILER_FLAGS "")
 if (MSVC)
     foreach(i IN LISTS INCLUDE_DIRS)
-        list(APPEND COMPILER_FLAGS "/I${i}")
+        if(i)
+            list(APPEND COMPILER_FLAGS "/I${i}")
+        endif()
     endforeach()
     foreach(i IN LISTS INT_INCLUDE_DIRS)
-        list(APPEND COMPILER_FLAGS "/I${i}")
+        if(i)
+            list(APPEND COMPILER_FLAGS "/I${i}")
+        endif()
     endforeach()
 
     foreach(d IN LISTS COMPILE_DEFINITIONS)
-        list(APPEND COMPILER_FLAGS "/D${d}")
+        if(d)
+            list(APPEND COMPILER_FLAGS "/D${d}")
+        endif()
     endforeach()
     foreach(d IN LISTS INT_COMPILE_DEFINITIONS)
-        list(APPEND COMPILER_FLAGS "/D${d}")
+        if(d)
+            list(APPEND COMPILER_FLAGS "/D${d}")
+        endif()
     endforeach()
 
     foreach(o IN LISTS COMPILE_OPTIONS)
@@ -24,17 +35,25 @@ if (MSVC)
     endforeach()
 else()
     foreach(i IN LISTS INCLUDE_DIRS)
-        list(APPEND COMPILER_FLAGS "-I${i}")
+        if(i)
+            list(APPEND COMPILER_FLAGS "-I${i}")
+        endif()
     endforeach()
     foreach(i IN LISTS INT_INCLUDE_DIRS)
-        list(APPEND COMPILER_FLAGS "-I${i}")
+        if(i)
+            list(APPEND COMPILER_FLAGS "-I${i}")
+        endif()
     endforeach()
 
     foreach(d IN LISTS COMPILE_DEFINITIONS)
-        list(APPEND COMPILER_FLAGS "-D${d}")
+        if(d)
+            list(APPEND COMPILER_FLAGS "-D${d}")
+        endif()
     endforeach()
     foreach(d IN LISTS INT_COMPILE_DEFINITIONS)
-        list(APPEND COMPILER_FLAGS "-D${d}")
+        if(d)
+            list(APPEND COMPILER_FLAGS "-D${d}")
+        endif()
     endforeach()
 
     foreach(o IN LISTS COMPILE_OPTIONS)
@@ -52,6 +71,7 @@ execute_process(
         OUTPUT_VARIABLE SOURCE_CONTENT
         ERROR_VARIABLE PP_ERROR
         RESULT_VARIABLE PP_RESULT
+        COMMAND_ECHO STDOUT
 )
 
 if(NOT PP_RESULT EQUAL 0)
