@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 4.1)
 project(CMakeFileEmbedder VERSION 1.0.0 LANGUAGES CXX)
 
-find_package(LLVM REQUIRED CONFIG)
-
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_INSTALL_INCLUDEDIR "include")
 set(CMAKE_INSTALL_LIBDIR "lib")
+
+if(MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY
+        "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+endif()
 
 if(WIN32)
         add_library(CMakeFileEmbedder
